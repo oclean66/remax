@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.0/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/components/popup.min.css">
+    <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/components/popup.min.js"></script>
+
+</head>
+
+<body>
+    <div class="ui menu">
+        <div class="header item">
+            Our Company
+        </div>
+        <a class="item">
+            About Us
+        </a>
+        <a class="item">
+            Jobs
+        </a>
+        <a class="item">
+            Locations
+        </a>
+    </div>
+
+    <div class="ui basic segment padded">
+        <div class="ui two column grid" bis_skin_checked="1">
+            <div class="thirteen wide column" bis_skin_checked="1">
+                <div id="example-table"></div>
+            </div>
+            <div class="three wide column" bis_skin_checked="1">
+                <div id='cardd' class="ui card hidden" bis_skin_checked="1">
+                    <div class="image" bis_skin_checked="1">
+                        <img id='leyend' src="https://semantic-ui.com/images/wireframe/square-image.png">
+                    </div>
+                    <div class="content" bis_skin_checked="1">
+                      <a class="header" id="title"></a>
+                      <div class="meta" bis_skin_checked="1">
+                        <span class="date" id="fecha"></span>
+                      </div>
+                      <div id='desc' class="description" bis_skin_checked="1">
+                        
+                      </div>
+                    </div>
+                    <div class="extra content" bis_skin_checked="1">
+                      <a>
+                        <i class="dollar icon"></i>
+                       <span id="precio"></span> 
+                      </a>
+                    </div>
+                  </div>
+
+               
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+
+</body>
+<script>
+    var table = new Tabulator("#example-table", {
+        height: window.innerHeight - 100, //set the table height option
+        // autoColumns: true,
+        layout: "fitDataStretch",
+        selectable: true, //make rows selectable
+        ajaxURL: "https://remax-1be58-default-rtdb.firebaseio.com/inmuebles.json", //ajax URL
+        ajaxContentType: "json",
+        columns: [
+            { title: "id", field: "id", sorter: "string" },
+            { title: "Titulo", field: "titulo", sorter: "string", width: 300, },
+            // { title: "precioReferencial", field: "precioReferencial", sorter: "number" },
+            {
+                title: "USD", field: "precioReferencial", formatter: "money", formatterParams: {
+                    decimal: ",",
+                    thousand: ".",
+                    symbol: "",
+                    symbolAfter: "p",
+                    negativeSign: true,
+                    precision: false,
+                }
+            },
+            { title: "Hab", field: "nroHabitaciones", sorter: "number" },
+            { title: "baños", field: "nroBanios", sorter: "number" },
+            // { title: "HabSer", field: "nroHabitacionesServicio", sorter: "number" },
+            {
+                title: "url", field: "url", sorter: "string", width: 10, formatter: "link", formatterParams: {
+                    labelField: "url",
+                    target: "_blank",
+                }
+            },
+            { title: "Fecha", field: "fechaIngreso", sorter: "string" },
+            { title: "AreaC", field: "areaConstruccion", sorter: "string" },
+            { title: "AreaT", field: "areaTerreno", sorter: "string" },
+            { title: "Ciudad", field: "ciudadMunicipio", sorter: "string" },
+            { title: "direccion", field: "direccionDetallada", sorter: "string", width: 200 },
+            // { title: "image", field: "imagenPrincipal", sorter: "string", width: 200 },
+            {
+                title: "Foto", field: "imagenPrincipal", sorter: "string", width: 10, formatter: "link", formatterParams: {
+                    labelField: "imagenPrincipal",
+                    target: "_blank",
+                }
+            },
+            // { title: "inmobiliaria", field: "inmobiliaria", sorter: "string" },
+            // { title: "fechaIngreso", field: "fechaIngreso", sorter: "string" },
+            { title: "Modificado", field: "fechaUltimaModificacion", sorter: "string" },
+            // { title: "Hab", field: "nroHabitaciones", sorter: "number" },
+            // { title: "HabSer", field: "nroHabitacionesServicio", sorter: "number" },
+
+            { title: "bañoss", field: "nroBaniosServicio", sorter: "number" },
+            // { title: "nroFotos", field: "nroFotos", sorter: "number" },
+            { title: "nroVisitas", field: "nroVisitas", sorter: "number" },
+
+        ],
+        ajaxResponse: function (url, params, response) {
+            //url - the URL of the request
+            //params - the parameters passed with the request
+            //response - the JSON object returned in the body of the response.
+            const final = []
+            const key = Object.keys(response);
+            key.forEach(element => {
+                final.push(response[element])
+            });
+
+            return final; //return the tableData property of a response json object
+        },
+    });
+
+
+    table.on("rowMouseEnter", function (e, row) {
+        //e - the event object
+        //row - row component
+        console.log(row);
+        console.log(row._row.data.imagenPrincipal);
+        console.log(e);
+        $('#leyend').attr('src', row._row.data.imagenPrincipalDetalle);
+        $('#precio').html( row._row.data.precioReferencial.toLocaleString('en-US'));
+        $('#title').html( row._row.data.titulo);
+        $('#fecha').html( row._row.data.fechaIngreso);
+        $('#desc').html( row._row.data.nroBanios + " Baños, "+ row._row.data.nroHabitaciones+" Habitaciones");
+       
+    });
+
+   
+</script>
+
+</html>
